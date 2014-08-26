@@ -31,9 +31,10 @@ class KippoGeo
     {
         $db_query = 'SELECT ip, COUNT(ip) '
             . "FROM sessions "
+            . "WHERE `starttime` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY ip "
             . "ORDER BY COUNT(ip) DESC "
-            . "LIMIT 10 ";
+            . "LIMIT 15 ";
 
         $result = $this->db_conn->query($db_query);
         //echo 'Found '.$result->num_rows.' records';

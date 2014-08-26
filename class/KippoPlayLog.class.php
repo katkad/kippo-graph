@@ -30,6 +30,7 @@ class KippoPlayLog
             . "JOIN auth "
             . "ON ttylog.session = auth.session "
             . "WHERE auth.success = 1 "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "ORDER BY timestamp DESC "
             . ") s "
             . "WHERE size > " . PLAYBACKSIZE_IGNORE;

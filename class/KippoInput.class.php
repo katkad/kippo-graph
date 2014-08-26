@@ -28,7 +28,8 @@ class KippoInput
 
         //TOTAL NUMBER OF COMMANDS
         $db_query = "SELECT COUNT(*) as total, COUNT(DISTINCT input) as uniq "
-            . "FROM input";
+            . "FROM input "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week)";
 
         $result = $this->db_conn->query($db_query);
         //echo 'Found '.$result->num_rows.' records';
@@ -60,7 +61,8 @@ class KippoInput
         //TOTAL DOWNLOADED FILES
         $db_query = "SELECT COUNT(*) as files, COUNT(DISTINCT input) as uniq_files "
             . "FROM input "
-            . "WHERE input LIKE '%wget%' AND input NOT LIKE 'wget'";
+            . "WHERE input LIKE '%wget%' AND input NOT LIKE 'wget' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week)";
 
         $result = $this->db_conn->query($db_query);
         //echo 'Found '.$result->num_rows.' records';
@@ -96,6 +98,7 @@ class KippoInput
     {
         $db_query = "SELECT COUNT(input), timestamp "
             . "FROM input "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY DAYOFYEAR(timestamp) "
             //."ORDER BY timestamp ASC ";
             . "ORDER BY COUNT(input) DESC "
@@ -129,6 +132,7 @@ class KippoInput
     {
         $db_query = 'SELECT COUNT(input), timestamp '
             . "FROM input "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY DAYOFYEAR(timestamp) "
             . "ORDER BY timestamp ASC ";
 
@@ -175,6 +179,7 @@ class KippoInput
             . "ELSE YEAR(timestamp) "
             . "END, (WEEKOFYEAR(timestamp) * 7)-4) AS DateOfWeek_Value "
             . "FROM input "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY WEEKOFYEAR(timestamp) "
             . "ORDER BY timestamp ASC";
 
@@ -221,6 +226,7 @@ class KippoInput
     {
         $db_query = 'SELECT input, COUNT(input) '
             . "FROM input "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY input "
             . "ORDER BY COUNT(input) DESC "
             . "LIMIT 10";
@@ -280,6 +286,7 @@ class KippoInput
         $db_query = 'SELECT input, COUNT(input) '
             . "FROM input "
             . "WHERE success = 1 "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY input "
             . "ORDER BY COUNT(input) DESC "
             . "LIMIT 10";
@@ -337,6 +344,7 @@ class KippoInput
         $db_query = 'SELECT input, COUNT(input) '
             . "FROM input "
             . "WHERE success = 0 "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY input "
             . "ORDER BY COUNT(input) DESC "
             . "LIMIT 10";
@@ -394,6 +402,7 @@ class KippoInput
         $db_query = 'SELECT timestamp, input, session '
             . "FROM input "
             . "WHERE realm like 'passwd' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY input "
             . "ORDER BY timestamp DESC";
 
@@ -437,6 +446,7 @@ class KippoInput
             . "timestamp, session "
             . "FROM input "
             . "WHERE input LIKE '%wget%' AND input NOT LIKE 'wget' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "ORDER BY timestamp DESC";
 
         $result = $this->db_conn->query($db_query);
@@ -487,6 +497,7 @@ class KippoInput
         $db_query = 'SELECT timestamp, input, session '
             . "FROM input "
             . "WHERE input like './%' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY input "
             . "ORDER BY timestamp DESC";
 
@@ -531,6 +542,7 @@ class KippoInput
             . "WHERE (input like '%cat%' OR input like '%dev%' OR input like '%man%' OR input like '%gpg%' OR input like '%ping%' "
             . "OR input like '%ssh%' OR input like '%scp%' OR input like '%whois%' OR input like '%unset%' OR input like '%kill%' "
             . "OR input like '%ifconfig%' OR input like '%iwconfig%' OR input like '%traceroute%' OR input like '%screen%' OR input like '%user%') "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "AND input NOT like '%wget%' AND input NOT like '%apt-get%' "
             . "GROUP BY input "
             . "ORDER BY timestamp DESC";
@@ -574,6 +586,7 @@ class KippoInput
         $db_query = 'SELECT timestamp, input, session '
             . "FROM input "
             . "WHERE (input like '%apt-get install%' OR input like '%apt-get remove%' OR input like '%aptitude install%' OR input like '%aptitude remove%') "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "AND input NOT LIKE 'apt-get' AND input NOT LIKE 'aptitude'"
             . "GROUP BY input "
             . "ORDER BY timestamp DESC";

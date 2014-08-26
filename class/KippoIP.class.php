@@ -23,7 +23,9 @@ class KippoIP
     public function printOverallIpActivity()
     {
         $db_query = 'SELECT * FROM (SELECT ip, MAX(starttime), COUNT(DISTINCT sessions.id) '
-            . "FROM sessions GROUP BY ip) A "
+            . "FROM sessions "
+            . "WHERE `starttime` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
+            . "GROUP BY ip) A "
             . "LEFT JOIN (SELECT sessions.ip, MAX(success) "
             . "FROM sessions, auth "
             . "WHERE sessions.id = auth.session "

@@ -25,7 +25,8 @@ class KippoGraph
     {
         //TOTAL LOGIN ATTEMPTS
         $db_query = 'SELECT COUNT(*) AS logins '
-            . "FROM auth";
+            . "FROM auth "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week)";
         $result = $this->db_conn->query($db_query);
         //echo 'Found '.$result->num_rows.' records';
 
@@ -40,7 +41,8 @@ class KippoGraph
 
         //TOTAL DISTINCT IPs
         $db_query = 'SELECT COUNT(DISTINCT ip) AS IPs '
-            . "FROM sessions";
+            . "FROM sessions "
+            . "WHERE `starttime` > DATE_SUB(now(), interval ".LAST_WEEKS." week)";
         $result = $this->db_conn->query($db_query);
         //echo 'Found '.$result->num_rows.' records';
 
@@ -55,7 +57,8 @@ class KippoGraph
 
         //OPERATIONAL TIME PERIOD
         $db_query = 'SELECT MIN(timestamp) AS start, MAX(timestamp) AS end '
-            . "FROM auth";
+            . "FROM auth "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week)";
 
         $result = $this->db_conn->query($db_query);
         //echo 'Found '.$result->num_rows.' records';
@@ -90,6 +93,7 @@ class KippoGraph
         $db_query = 'SELECT password, COUNT(password) '
             . "FROM auth "
             . "WHERE password <> '' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY password "
             . "ORDER BY COUNT(password) DESC "
             . "LIMIT 10 ";
@@ -119,6 +123,7 @@ class KippoGraph
         $db_query = 'SELECT username, COUNT(username) '
             . "FROM auth "
             . "WHERE username <> '' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY username "
             . "ORDER BY COUNT(username) DESC "
             . "LIMIT 10 ";
@@ -148,6 +153,7 @@ class KippoGraph
         $db_query = 'SELECT username, password, COUNT(username) '
             . "FROM auth "
             . "WHERE username <> '' AND password <> '' "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY username, password "
             . "ORDER BY COUNT(username) DESC "
             . "LIMIT 10 ";
@@ -184,6 +190,7 @@ class KippoGraph
     {
         $db_query = 'SELECT success, COUNT(success) '
             . "FROM auth "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY success "
             . "ORDER BY success";
 
@@ -218,6 +225,7 @@ class KippoGraph
         $db_query = 'SELECT COUNT(session), timestamp '
             . "FROM auth "
             . "WHERE success = 1 "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY DAYOFYEAR(timestamp) "
             //."HAVING COUNT(session) >= XX "
             . "ORDER BY COUNT(session) DESC "
@@ -250,6 +258,7 @@ class KippoGraph
         $db_query = 'SELECT COUNT(session), timestamp '
             . "FROM auth "
             . "WHERE success = 1 "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY DAYOFYEAR(timestamp) "
             . "ORDER BY timestamp ASC ";
 
@@ -294,6 +303,7 @@ class KippoGraph
             . "END, (WEEKOFYEAR(timestamp) * 7)-4) AS DateOfWeek_Value "
             . "FROM auth "
             . "WHERE success = 1 "
+            . "AND `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY WEEKOFYEAR(timestamp) "
             . "ORDER BY timestamp ASC";
 
@@ -336,6 +346,7 @@ class KippoGraph
     {
         $db_query = 'SELECT ip, COUNT(ip) '
             . "FROM sessions "
+            . "WHERE `starttime` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY ip "
             . "ORDER BY COUNT(ip) DESC "
             . "LIMIT 10 ";
@@ -373,6 +384,7 @@ class KippoGraph
         $db_query = 'SELECT sessions.ip, COUNT(sessions.ip) '
             . "FROM sessions INNER JOIN auth ON sessions.id = auth.session "
             . "WHERE auth.success = 1 "
+            . "AND `starttime` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY sessions.ip "
             . "ORDER BY COUNT(sessions.ip) DESC "
             . "LIMIT 20 ";
@@ -403,6 +415,7 @@ class KippoGraph
     {
         $db_query = 'SELECT COUNT(session), timestamp '
             . "FROM auth "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY DAYOFYEAR(timestamp) "
             . "ORDER BY COUNT(session) DESC "
             . "LIMIT 20 ";
@@ -433,6 +446,7 @@ class KippoGraph
     {
         $db_query = 'SELECT COUNT(session), timestamp '
             . "FROM auth "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY DAYOFYEAR(timestamp) "
             . "ORDER BY timestamp ASC ";
 
@@ -475,6 +489,7 @@ class KippoGraph
             . "ELSE YEAR(timestamp) "
             . "END, (WEEKOFYEAR(timestamp) * 7)-4) AS DateOfWeek_Value "
             . "FROM auth "
+            . "WHERE `timestamp` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY WEEKOFYEAR(timestamp) "
             . "ORDER BY timestamp ASC";
 
@@ -518,6 +533,7 @@ class KippoGraph
     {
         $db_query = 'SELECT clients.version, COUNT(client) '
             . "FROM sessions INNER JOIN clients ON sessions.client = clients.id "
+            . "WHERE `sessions.starttime` > DATE_SUB(now(), interval ".LAST_WEEKS." week) "
             . "GROUP BY sessions.client "
             . "ORDER BY COUNT(client) DESC "
             //."ORDER BY clients.version ASC"; //alphabetical sorting
